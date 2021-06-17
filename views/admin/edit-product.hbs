@@ -1,0 +1,34 @@
+<div class="container">
+    <form method="POST" enctype="multipart/form-data" action="/admin/edit-product/{{productDetails._id}}">
+        <h2 class="text-center">Edit products</h2>
+        <div class="mb-3">
+            <label for="" class="form-label">Name</label>
+            <input type="text" class="form-control" id="" name="Name" value="{{productDetails.Name}}">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Category</label>
+            <input type="text" class="form-control" id="" name="Category" value="{{productDetails.Category}}">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Description</label>
+            <input type="text" class="form-control" id="" name="Description" value="{{productDetails.Description}}">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Price</label>
+            <input type="number" class="form-control" id="" name="Price" value="{{productDetails.Price}}">
+        </div>
+        <div class="mb-3">
+            <label for="" class="form-label">Image</label><br>
+            <img src="/product-images/{{productDetails._id}}.jpg" id="image" style="width: 100px;">
+            <input type="file" class="form-control mt-2" id="" name="Image" onchange="imgFunc(event)">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+
+<script>
+    function imgFunc(event) {
+        var output = document.getElementById('image')
+        output.src = URL.createObjectURL(event.target.files[0])
+    }
+</script>

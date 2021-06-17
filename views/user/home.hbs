@@ -1,0 +1,30 @@
+<div class="container">
+    <div class="row">
+        {{#each products}}
+        <div class="col-sm-3 mt-3">
+            <div class="card" style="width: 18rem;">
+                <img src="/product-images/{{this._id}}.jpg" class="card-img-top" style="height: 200px">
+                <div class="card-body">
+                    <h5 class="card-title">{{this.Name}} - {{this.Category}}</h5>
+                    <p class="card-text">{{this.Description}}.</p>
+                    <button class="btn btn-primary" onclick="addToCart('{{this._id}}')">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        {{/each}}
+    </div>
+</div>
+
+<script>
+    function addToCart(proId) {
+        var xhr = new XMLHttpRequest()
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                let count = document.getElementById("count").innerHTML
+                document.getElementById("count").innerHTML = parseInt(count) + 1
+            }
+        }
+        xhr.open("GET", "/add-to-cart/" + proId, true)
+        xhr.send()
+    }
+</script>

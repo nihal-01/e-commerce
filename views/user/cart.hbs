@@ -1,0 +1,100 @@
+{{#if err}}
+<h1>{{err}}</h1>
+{{else}}
+
+
+<section>
+    <div class="container">
+        <table class="table mt-5">
+            <thead>
+                <tr>
+                    <th>Item</th>
+                    <th>Title</th>
+                    <th>Price</th>
+                    <th>Quantity</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#each cartItems}}
+                <tr>
+                    <td><img src="/product-images/{{this.product._id}}.jpg" alt="" style="width: 70px;"></td>
+                    <td>{{this.product.Name}}</td>
+                    <td>Rs.{{this.product.Price}}</td>
+                    <td>
+                        <button class="cart-item-count" style="margin-right: 7px;"
+                            onclick="changeQuantity(event,'{{this._id}}', '{{this.product._id}}', -1, '{{../user}}')">-</button>
+                        <span id="{{this.product._id}}">
+                            {{this.quantity}}</span> <button class="cart-item-count" style="margin-left: 7px;"
+                            onclick="changeQuantity(event,'{{this._id}}', '{{this.product._id}}', 1, '{{../user}}')">+</button>
+                    </td>
+                    <td>
+                        <button class="btn btn-danger"
+                            onclick="removeProduct(event,'{{this._id}}','{{this.product._id}}', '{{../user}}')">Remove</button>
+                    </td>
+                </tr>
+                {{/each}}
+            </tbody>
+        </table>
+        <br>
+        <br>
+        <br>
+        <hr>
+        <div class="mt-5 text-center">
+            <h3 class="text-center">Total: RS. <span id="total-amount">{{totalPrice}}</span></h3>
+            <a href="/place-order" class="btn btn-success">Place Order</a>
+        </div>
+    </div>
+</section>
+
+{{/if}}
+
+<script>
+    function changeQuantity(event, cartId, proId, count, userId) {
+        var xhr = new XMLHttpRequest()
+        let quantity = parseInt(document.getElementById(proId).innerHTML)
+        var params = {
+            cartId: cartId,
+            proId: proId,
+            count: count,
+            quantity: quantity,
+            userId: userId
+        }
+        xhr.onreadystatechange = function (response) {
+            if (this.readyState == 4 && this.status == 200) {
+                if (JSON.parse(this.responseText).removeProduct == true) {
+                    alert("product removed from cart")
+                    var td = event.target.parentNode;
+                    var tr = td.parentNode;
+                    tr.parentNode.removeChild(tr);
+                    document.getElementById("total-amount").innerHTML = JSON.parse(this.responseText).total
+                } else {
+                    document.getElementById(proId).innerHTML = quantity + count
+                    document.getElementById("total-amount").innerHTML = JSON.parse(this.responseText).total
+                }
+            }
+        }
+        xhr.open("POST", "/change-product-quantity", true)
+        xhr.setRequestHeader('Content-type', 'application/json')
+        xhr.send(JSON.stringify(params))
+    }
+
+    function removeProduct(event, cartId, proId, userId) {
+        var xhr = new XMLHttpRequest()
+        let params = {
+            cartId: cartId,
+            proId: proId,
+            userId: userId,
+        }
+        xhr.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+                var td = event.target.parentNode;
+                var tr = td.parentNode;
+                tr.parentNode.removeChild(tr);
+                document.getElementById("total-amount").innerHTML = JSON.parse(this.responseText).total
+            }
+        }
+        xhr.open("POST", "/remove-one-product", true)
+        xhr.setRequestHeader("Content-type", "application/json")
+        xhr.send(JSON.stringify(params))
+    }
+</script>
